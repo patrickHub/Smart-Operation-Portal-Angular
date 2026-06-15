@@ -1,0 +1,31 @@
+<div class="min-h-screen bg-slate-50 text-slate-900">
+  <app-sidebar (collapsedChange)="onSidebarToggle($event)"></app-sidebar>
+
+  <main 
+    [className]="'min-h-screen transition-all duration-300 ' + (isSidebarCollapsed() ? 'pl-20' : 'pl-72')"
+  >
+    <header class="sticky top-0 z-30 border-b bg-white/90 px-8 py-4 backdrop-blur">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">SmartOps Admin Portal</p>
+          <h2 class="text-xl font-bold text-slate-900">Operations Dashboard</h2>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <p class="text-sm font-semibold">Patrick Djomo</p>
+            <p class="text-xs text-slate-500">System Administrator</p>
+          </div>
+
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 font-bold text-white">
+            PD
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="p-8">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
