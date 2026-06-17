@@ -1,0 +1,80 @@
+<div class="overflow-y-auto max-w-8/10" cdkScrollable>
+@if (isLoading()) {
+        <div class="flex flex-col items-center justify-center py-20">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p class="text-xs font-medium">Fetching data...</p>
+        </div>
+} @else {
+  <!-- Header -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 md:py-8 md:px-10 border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800 rounded-xl gap-4">
+      
+      <div class="flex-1 min-w-0">
+      <div class="flex flex-col gap-1 mt-2">
+            
+            <div class="flex items-center gap-2 sm:gap-3">
+            <mat-icon class="!h-7 !w-7 !text-2xl sm:!h-8 sm:!w-8 sm:!text-3xl flex items-center justify-center text-slate-600 dark:text-slate-400 shrink-0">
+            assignment_ind
+            </mat-icon>
+            
+            <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-gray-800 dark:text-gray-100 m-0">
+            {{customer()!.legalName}}
+            </h2>
+            </div>
+            
+            <div class="pl-9 sm:pl-11">
+            <span class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium">
+            Customer Detail
+            </span>
+            </div>
+            
+      </div>
+      </div>
+      
+      </div>
+      <!-- Content -->
+      <div class="flex-auto mt-0 pt-6 sm:px-4 sm:pb-4 bg-white border-b shadow-lg rounded-b-lg">
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
+      
+                  <nav mat-tab-nav-bar [tabPanel]="tabPanel" class="border-b border-gray-100 dark:border-gray-700">
+                        
+                        <a mat-tab-link 
+                        [routerLink]="['/apps/customers', customerId(), 'info']"
+                        routerLinkActive #rlaInfo="routerLinkActive"
+                        [active]="rlaInfo.isActive"
+                        [class.!bg-gray-100]="rlaInfo.isActive"
+                        [class.dark:!bg-gray-800]="rlaInfo.isActive">
+                        <mat-icon class="mr-2 mb-2 !text-base !h-4 !w-4 flex items-center justify-center">badge</mat-icon>
+                        Detail Infos
+                        </a>
+
+                        <a mat-tab-link 
+                        [routerLink]="['/apps/customers', customerId(), 'sites']"
+                        routerLinkActive #rlaSites="routerLinkActive"
+                        [active]="rlaSites.isActive"
+                        [class.!bg-gray-100]="rlaSites.isActive"
+                        [class.dark:!bg-gray-800]="rlaSites.isActive">
+                        <mat-icon class="mr-2 mb-2 !text-base !h-4 !w-4 flex items-center justify-center">precision_manufacturing</mat-icon>
+                        Sites Registry
+                        </a>
+
+                        <a mat-tab-link 
+                        [routerLink]="['/apps/customers', customerId(), 'contacts']"
+                        routerLinkActive #rlaContacts="routerLinkActive"
+                        [active]="rlaContacts.isActive"
+                        [class.!bg-gray-100]="rlaContacts.isActive"
+                        [class.dark:!bg-gray-800]="rlaContacts.isActive">
+                        <mat-icon class="mr-2 mb-1 !text-base !h-4 !w-4 flex items-center justify-center">contacts</mat-icon>
+                        Contacts List
+                        </a>
+
+                  </nav>
+
+                  <mat-tab-nav-panel #tabPanel>
+                        <div class="p-4 sm:p-6 bg-white dark:bg-gray-800">
+                              <router-outlet (activate)="onTabActivated($event)"></router-outlet>
+                        </div>
+                  </mat-tab-nav-panel>
+            </div>
+      </div>
+}
+      

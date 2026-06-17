@@ -1,0 +1,64 @@
+<div class="pt-2 pb-6">
+    <h3 mat-dialog-title class="!text-base text-slate-800 flex items-center gap-2 pb-2 !ml-3 border-b border-slate-100">
+        <mat-icon class="text-emerald-500 !h-5 !w-5 !text-lg flex items-center justify-center">person_add</mat-icon>
+        Create New Customer
+    </h3>
+
+    <mat-dialog-content>
+
+        <form [formGroup]="customerForm" (ngSubmit)="submitForm()" class="flex flex-col gap-4">
+        
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 mb-2 mx-3">
+                <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Legal Name</mat-label>
+                    <input matInput formControlName="legalName" placeholder="e.g. Acme Corp LLC" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Display Name</mat-label>
+                    <input matInput formControlName="displayName" placeholder="e.g. Acme" />
+                </mat-form-field>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2 mx-3">
+                <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Tax Identifier</mat-label>
+                    <input matInput formControlName="taxIdentifier" placeholder="CHE-XXX.XXX.XXX" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Industry Sector</mat-label>
+                    <mat-select formControlName="industry">
+                    <mat-option value="Manufacturing">Manufacturing</mat-option>
+                    <mat-option value="Technology">Technology</mat-option>
+                    <mat-option value="Energy">Energy</mat-option>
+                    <mat-option value="Healthcare">Healthcare</mat-option>
+                    <mat-option value="Logistics">Logistics</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="mx-3 mb-6">
+                <mat-label>Internal Operational Notes</mat-label>
+                <textarea matInput formControlName="notes" rows="3" placeholder="Add custom terms or account history parameters..."></textarea>
+            </mat-form-field>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="">
+        <button mat-button type="button" (click)="cancel()" [disabled]="isSubmitting()" class="!text-slate-900 hover:!text-slate-700 hover:!bg-slate-100/50 transition-colors">
+            Cancel
+        </button>
+        
+        <button mat-flat-button color="primary" class="mr-3" type="button" (click)="submitForm()" [disabled]="customerForm.invalid || isSubmitting()">
+        @if (isSubmitting()) {
+            <div class="flex items-center justify-center gap-2">
+                <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent shrink-0"></div>
+                <span>Processing...</span>
+            </div>
+        } @else {
+            Create Customer
+        }
+        </button>
+    </mat-dialog-actions>
+</div>

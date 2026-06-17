@@ -1,0 +1,79 @@
+<div class="space-y-6 animate-fade-in">
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    
+    <div class="p-5 border border-gray-100 dark:border-gray-700/60 rounded-xl bg-gray-50/50 dark:bg-gray-900/20 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Identity Details</span>
+          <mat-icon class="text-blue-500 !text-lg !h-5 !w-5 flex items-center justify-center">fingerprint</mat-icon>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <label class="text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500 block">Legal Entity Name</label>
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100 block mt-0.5">{{ customer().legalName }}</span>
+          </div>
+          <div>
+            <label class="text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500 block">Commercial Display Name</label>
+            <span class="text-sm text-gray-700 dark:text-gray-300 block mt-0.5">{{ customer().displayName }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-5 border border-gray-100 dark:border-gray-700/60 rounded-xl bg-gray-50/50 dark:bg-gray-900/20 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Corporate & Tax</span>
+          <mat-icon class="text-emerald-500 !text-lg !h-5 !w-5 flex items-center justify-center">gavel</mat-icon>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <label class="text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500 block">Tax Identifier / UID</label>
+            <span class="text-sm font-mono font-medium text-gray-800 dark:text-gray-200 block mt-0.5">{{ customer().taxIdentifier }}</span>
+          </div>
+          <div>
+            <label class="text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500 block">Industry Vertical</label>
+            <span class="inline-flex items-center mt-1 px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+              {{ customer().industry }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-5 border border-gray-100 dark:border-gray-700/60 rounded-xl bg-gray-50/50 dark:bg-gray-900/20 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">System Parameters</span>
+          <mat-icon class="text-amber-500 !text-lg !h-5 !w-5 flex items-center justify-center">settings_ethernet</mat-icon>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <label class="text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500 block">Account Number</label>
+            <span class="text-sm font-mono text-gray-900 dark:text-gray-100 font-bold block mt-0.5">{{ customer().customerNumber }}</span>
+          </div>
+          <div>
+            <label class="text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500 block">Account Lifecycle Status</label>
+            <span class="inline-flex items-center mt-1 rounded-full px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase
+                   {{ customer().status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300' }}">
+              {{ customer().status }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="p-6 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm">
+    <div class="flex items-center gap-2 mb-3 border-b border-gray-100 dark:border-gray-700/60 pb-2">
+      <mat-icon class="text-slate-400 !text-base !h-4 !w-4 flex items-center justify-center">speaker_notes</mat-icon>
+      <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Internal Operational Notes</h4>
+    </div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">
+      {{ customer().notes ? customer().notes : 'No extra system administration annotations or strategic notes recorded for this customer record account profile.' }}
+    </p>
+  </div>
+
+</div>
