@@ -1,1 +1,130 @@
-<p>customer-list.component works!</p>
+<div class="overflow-y-auto" cdkScrollable>
+  <!-- Header -->
+  <div
+    class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 md:py-8 md:px-10 border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800 rounded-xl gap-4"
+  >
+    <div class="flex-1 min-w-0">
+      <div class="mt-2">
+        <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-gray-800 dark:text-gray-100 flex items-center gap-2 sm:gap-3"
+        >
+          <mat-icon class="!h-7 !w-7 !text-2xl sm:!h-8 sm:!w-8 sm:!text-3xl flex items-center justify-center text-slate-600 dark:text-slate-400">group</mat-icon>
+          <span class="mr-1"></span>
+          Customers Dashboard
+        </h2>
+      </div>
+    </div>
+    <div class="mt-4 sm:ml-6 sm:mt-0">
+            <button
+                mat-flat-button
+                color="primary"
+                type="button"
+                (click)="openCreateCustomerDialog()"
+                class="w-full sm:w-auto !rounded-lg !h-10 text-sm font-semibold flex items-center justify-center gap-1"
+            >
+                <mat-icon>add</mat-icon>
+                Create Customer
+            </button>
+        </div>
+  </div>  
+
+  <!-- Content -->
+  <div class="flex-auto mt-3 pt-6 sm:pt-5 sm:px-4 sm:pb-4 bg-white border-x border-gray-200 shadow-lg border-b-[4px] rounded-xl">
+    @if (isLoading()) {
+        <div class="flex flex-col items-center justify-center py-20">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p class="text-xs font-medium">Fetching data...</p>
+        </div>
+    }
+
+    @if (customers().length === 0) {
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+            <mat-icon
+                class="mb-4 text-gray-300 dark:text-gray-600"
+                style="font-size: 80px; width: 80px; height: 80px;"
+            >
+                search_off
+            </mat-icon>
+
+            <h3 class="mb-2 text-2xl font-semibold text-gray-700 dark:text-gray-300">
+                No customers available
+            </h3>
+
+            <p class="max-w-md text-gray-500 dark:text-gray-400">
+                There are no customers available at the moment.
+            </p>
+        </div>
+    }@else{
+
+        <table
+            class="table-fixed w-full overflow-x-auto border-collapse border border-gray-200 dark:border-gray-700 text-left rounded-lg overflow-hidden text-sm min-w-[800px]"
+        >
+            <thead class="bg-gray-50 dark:bg-gray-800 font-medium">
+                <tr>
+                    <th class="px-2 py-2 border border-gray-200 text-center rounded-tl-lg">Customer Number</th>
+                    <th class="px-4 py-2 border border-gray-200 text-center sticky top-0 bg-gray-50 dark:bg-gray-800 rounded-tr-lg">Legal Name</th>
+                    <th class="px-4 py-2 border border-gray-200 text-center sticky top-0 bg-gray-50 dark:bg-gray-800 rounded-tr-lg">Display Name</th>
+                    <th class="px-4 py-2 border border-gray-200 text-center sticky top-0 bg-gray-50 dark:bg-gray-800 rounded-tr-lg">Industry</th>
+                    <th class="px-4 py-2 border border-gray-200 text-center sticky top-0 bg-gray-50 dark:bg-gray-800 rounded-tr-lg">Status</th>
+                    <th class="px-4 py-2 border border-gray-200 text-center sticky top-0 bg-gray-50 dark:bg-gray-800 rounded-tr-lg">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                @for (customer of customers(); track customer.id) {
+                    <tr class="hover:bg-gray-100 dark:hover:bg-gray-700"> 
+                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 whitespace-nowrap text-center sm:!text-[11px] lg:!text-base text-[10px] font-medium">
+                            <span class="font-medium whitespace-nowrap text-neutral-500">{{customer.customerNumber}}</span>                        
+                        </td>
+                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 whitespace-nowrap text-center sm:!text-[9px] lg:!text-sm text-[9px] font-medium">
+                            {{customer.legalName}}
+                        </td>
+                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 whitespace-nowrap text-gray-800 sm:!text-[9px] lg:!text-sm text-[9px] dark:text-gray-200 text-center font-medium">
+                            {{customer.displayName}}
+                        </td>
+                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 whitespace-nowrap text-gray-800 sm:!text-[11px] lg:!text-sm text-[10px] dark:text-gray-200 text-center font-medium">
+                            {{customer.industry}}
+                        </td>
+                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 whitespace-nowrap text-gray-800 sm:!text-[11px] lg:!text-sm text-[10px] dark:text-gray-200 text-center">
+                            <span class="
+                                inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase
+                                 {{customer.status === 'Active'? 'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50' : 'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50' }}">
+                                {{customer.status}}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 whitespace-nowrap text-center">
+                            <div class="">
+                                <button matButton="outlined" (click)="showCustomerDetail(customer)"
+                                        class="group mdc-button mat-mdc-button-base text-xs !h-6 text-neutral-500 mat-mdc-button  mat-unthemed lg:!border lg:border-gray-200 flex items-center justify-center p-0 transition-colors duration-200">
+                                    <mat-icon matTooltip="Display customer details" class="flex items-center justify-center !m-0 !p-0 !text-blue-600  transition-colors duration-200">
+                                        description
+                                    </mat-icon>
+                                </button>
+                                <button matButton="outlined" class="mdc-button mat-mdc-button-base !h-6 text-xs mat-mdc-button mat-unthemed flex items-center justify-center p-0">
+                                    <mat-icon matTooltip="Update customer" class="flex items-center justify-center !m-0 !p-0 !text-green-600">edit</mat-icon>
+                                </button>
+                                <button matButton="outlined" class="mdc-button mat-mdc-button-base !h-6 text-xs text-neutral-500 mat-mdc-button mat-unthemed flex items-center justify-center p-0">
+                                    <mat-icon matTooltip="Delete customer" class="flex items-center justify-center !m-0 !p-0 !text-red-600">delete</mat-icon>
+                                </button>
+                            </div>
+                            
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        <div class="flex justify-end mt-4">
+            <mat-paginator
+            class="self-end"
+            [length]="customers().length"
+            [pageSizeOptions]="[5, 10, 25]"
+            [pageSize]="10"
+            class="mt-2 rounded-lg"
+            ></mat-paginator>
+        </div>
+
+    }
+    
+    
+  </div>
+</div>
+
