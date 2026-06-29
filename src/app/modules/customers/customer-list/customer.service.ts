@@ -2,9 +2,11 @@ import {Injectable} from '@angular/core'
 import {HttpClient, HttpHeaders} from '@angular/common/http'
 import { catchError, map, Observable, of } from 'rxjs';
 import { CustomerDTO } from '../DTOs/customerDTO';
+import { CreateResponseDTO } from '../DTOs/createResponseDTO';
 import { Utility } from '../../../utility';
-import { CreateResponseDTO } from '../DTOs/CreateResponseDTO';
 import { CreateCustomerRequest } from '../contracts/createCustomerRequest';
+import { CustomerSiteDTO } from '../DTOs/customerSiteDTO';
+import { CreateCustomerSiteRequest } from '../contracts/createCustomerSiteRequest';
 
 
 
@@ -42,7 +44,41 @@ export class CustomerService{
 
     }
 
-     public getCustomerById(id: string): Observable<CustomerDTO>{
+
+    public fetchCustomerSites(customerId: string): Observable<CustomerSiteDTO[]> {
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-type': 'application/json',
+                'Access-Control-Allow-Origin':  'http://localhost:4200',
+            })
+        }
+        const finalUrl = Utility.getBaseUrl() + this.customerUrl + '/' + customerId + '/sites';
+        return this.httpClient.get<CustomerSiteDTO[]>(finalUrl, httpOptions).pipe(
+            catchError((error) => {
+                console.error('Error fetching customer sites:', error);
+                return of([]);
+            })
+        );
+    }
+
+     public createCustomerSite(customerId: string, requestPayload: CreateCustomerSiteRequest): Observable<CreateResponseDTO | null>{
+        const httpOption = {
+            headers: new HttpHeaders({
+            'Content-type': 'application/json',
+            'Access-Control-Allow-Origin':  'http://localhost:4200',
+            })
+        };
+
+        const finalUrl = Utility.getBaseUrl() + this.customerUrl + '/' + customerId + '/sites';
+        return this.httpClient.post<CreateResponseDTO>(finalUrl, requestPayload, httpOption).pipe(
+            catchError((err) => {
+                console.error('Error create new site from customer id: ' + customerId, err);
+                return of(null);
+            })
+        )
+    }
+
+    public getCustomerById(id: string): Observable<CustomerDTO>{
         const httpOptions = {
             headers: new HttpHeaders({
 
@@ -59,6 +95,8 @@ export class CustomerService{
         );
 
     }
+
+   
 
     public createCustomer(requestPayload: CreateCustomerRequest): Observable<CreateResponseDTO | null> {
         const httpOptions = {

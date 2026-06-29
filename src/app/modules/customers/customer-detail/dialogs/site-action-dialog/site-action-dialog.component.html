@@ -1,0 +1,143 @@
+<div class="w-full max-w-full overflow-hidden flex flex-col bg-white dark:bg-gray-800">
+  
+  <h3 mat-dialog-title class="!text-sm sm:!text-base !font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 p-4 border-b border-slate-100 dark:border-slate-700 !m-0">
+    <mat-icon class="!text-lg !pt-1 flex items-center justify-center
+           {{ currentMode() === 'CONFIRM_DELETE' ? 'text-red-500' : 'text-emerald-500' }}">
+      {{ currentMode() === 'CONFIRM_DELETE' ? 'warning' : 'location_on' }}
+    </mat-icon>
+    <span>
+      @if (currentMode() === 'CREATE') { New Facility Onboarding }
+      @if (currentMode() === 'VIEW') { Site Log Summary: {{injectedData.customerSite?.siteNumber}} }
+      @if (currentMode() === 'EDIT') { Modify Facility Parameters }
+      @if (currentMode() === 'CONFIRM_DELETE') { Dangerous Event Confirmation! }
+    </span>
+  </h3>
+
+  @if (currentMode() === 'VIEW') {
+    <mat-dialog-content class="!m-0 p-5 space-y-4 max-h-[60vh] overflow-y-auto text-xs sm:text-sm">
+      <div class="grid grid-cols-2 gap-4 bg-gray-50 dark:bg-gray-900/40 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Facility Description</label>
+          <div class="font-bold text-gray-900 dark:text-white text-sm mt-0.5">{{injectedData.customerSite?.siteName}}</div>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Regional Sub-Status</label>
+          <div class="mt-0.5 font-medium text-gray-700 dark:text-gray-300">{{injectedData.customerSite?.status}}</div>
+        </div>
+      </div>
+      
+      <div class="space-y-2">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Physical Address Destination</label>
+        <div class="text-gray-800 dark:text-gray-200 font-medium bg-white dark:bg-gray-800 p-3 border border-gray-100 dark:border-gray-700 rounded-lg">
+          <p>{{injectedData.customerSite?.addressLine1}}</p>
+          @if (injectedData.customerSite?.addressLine2) { <p class="text-gray-500">{{injectedData.customerSite?.addressLine2}}</p> }
+          <p class="mt-1 text-xs text-gray-500">{{injectedData.customerSite?.postalCode}} {{injectedData.customerSite?.city}} ({{injectedData.customerSite?.stateRegion}}), {{injectedData.customerSite?.countryCode}}</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Timezone Node</label>
+          <p class="font-mono text-gray-600 dark:text-gray-400 mt-0.5">{{injectedData.customerSite?.timezone}}</p>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Database Entry Date</label>
+          <p class="text-gray-600 dark:text-gray-400 mt-0.5">{{injectedData.customerSite?.createdAt | date:'short'}}</p>
+        </div>
+      </div>
+
+      @if (injectedData.customerSite?.accessInstructions) {
+        <div class="p-3 bg-amber-50/50 dark:bg-amber-950/10 border border-amber-100 dark:border-amber-900/40 rounded-lg text-amber-900 dark:text-amber-400">
+          <label class="text-[10px] font-bold uppercase tracking-wider block mb-0.5 text-amber-800 dark:text-amber-500">Security Instructions</label>
+          <p class="text-xs leading-relaxed">{{injectedData.customerSite?.accessInstructions}}</p>
+        </div>
+      }
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="border-t border-slate-100 dark:border-slate-700 !p-4 gap-2 bg-slate-50/50">
+      <button mat-button type="button" (click)="cancel()" class="!rounded-lg !text-xs text-slate-500 h-9">Close</button>
+      <button mat-button type="button" (click)="currentMode.set('CONFIRM_DELETE')" class="!rounded-lg !text-xs !text-red-500 hover:!bg-red-50 h-9 font-semibold">Delete Site</button>
+      <button mat-flat-button type="button" (click)="currentMode.set('EDIT')" class="!rounded-lg !text-xs !bg-blue-600 !text-white px-4 h-9 font-medium">Update Info</button>
+    </mat-dialog-actions>
+  }
+
+  @if (currentMode() === 'CONFIRM_DELETE') {
+    <mat-dialog-content class="!m-0 p-6 text-center space-y-3">
+      <div class="h-12 w-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto text-2xl font-bold">!</div>
+      <h4 class="text-base font-bold text-gray-900 dark:text-white">Are you absolutely sure?</h4>
+      <p class="text-xs text-gray-500 max-w-sm mx-auto">
+        This action permanently removes <span class="font-bold text-gray-800">{{injectedData.customerSite?.siteName}}</span> from the system. This action cannot be undone.
+      </p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end" class="border-t border-slate-100 !p-4 gap-2">
+      <button mat-button type="button" [disabled]="isProcessing()" (click)="currentMode.set('VIEW')" class="!rounded-lg !text-xs text-slate-500 h-9">Cancel</button>
+      <button mat-flat-button type="button" [disabled]="isProcessing()" (click)="confirmDeletionExecution()" class="!rounded-lg !text-xs !bg-red-600 !text-white px-5 h-9 font-bold">
+        @if (isProcessing()) { Destroying... } @else { Confirm Destruction }
+      </button>
+    </mat-dialog-actions>
+  }
+
+  @if (currentMode() === 'CREATE' || currentMode() === 'EDIT') {
+    <form [formGroup]="siteForm" (ngSubmit)="currentMode() === 'CREATE' ? createCustomerSite() : updateExistingSite()">
+      <mat-dialog-content class="!m-0 p-4 sm:p-6 max-h-[60vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <mat-form-field appearance="outline" class="w-full md:col-span-2">
+          <mat-label>Site Location Identifier Name</mat-label>
+          <input matInput formControlName="siteName" placeholder="e.g. Geneva Hub Clinic" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Address Street Line 1</mat-label>
+          <input matInput formControlName="addressLine1" placeholder="e.g. Rue de Lausanne 10" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Building / Suite Suite (Line 2)</mat-label>
+          <input matInput formControlName="addressLine2" placeholder="e.g. Building A, Floor 3" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>City</mat-label>
+          <input matInput formControlName="city" placeholder="e.g. Geneva" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>State / Canton / Region</mat-label>
+          <input matInput formControlName="stateRegion" placeholder="e.g. GE" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Postal Zip Code</mat-label>
+          <input matInput formControlName="postalCode" placeholder="e.g. 1201" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Two-Letter Country ISO Code</mat-label>
+          <input matInput formControlName="countryCode" placeholder="e.g. CH" maxlength="2" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full md:col-span-2">
+          <mat-label>System Operational Regional Timezone</mat-label>
+          <input matInput formControlName="timezone" placeholder="e.g. Europe/Zurich" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full md:col-span-2">
+          <mat-label>Access Entry Security Instructions</mat-label>
+          <textarea matInput formControlName="accessInstructions" rows="2" placeholder="Security checkpoints metadata..."></textarea>
+        </mat-form-field>
+
+      </mat-dialog-content>
+
+      <mat-dialog-actions align="end" class="border-t border-slate-100 !p-4 gap-2 bg-slate-50/50">
+        <button mat-button type="button" [disabled]="isProcessing()" (click)="currentMode() === 'EDIT' ? currentMode.set('VIEW') : cancel()" class="!rounded-lg !text-xs text-slate-500 h-9">
+          Cancel
+        </button>
+        <button mat-flat-button color="primary"  type="submit" [disabled]="siteForm.invalid || isProcessing()" 
+                class="!rounded-lg !text-xs !text-white px-5 h-9 font-medium flex items-center justify-center">
+          @if (isProcessing()) { Processing... } @else { Save Location Parameters }
+        </button>
+      </mat-dialog-actions>
+    </form>
+  }
+
+</div>

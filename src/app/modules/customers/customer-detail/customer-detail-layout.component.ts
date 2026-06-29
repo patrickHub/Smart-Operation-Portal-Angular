@@ -58,7 +58,10 @@ export class CustomerDetailLayoutComponent implements OnInit {
       if(componentRef && 'customer' in componentRef && this.customer()){
         // then write the signal object straight down into the sub-component reference parameter
         componentRef.customer = this.customer;
+      }else if(componentRef && 'customerId' in componentRef && this.customerId()){
+        componentRef.customerId = this.customerId;
       }
+      
     }
 
   
